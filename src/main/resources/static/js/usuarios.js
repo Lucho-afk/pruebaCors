@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 async function cargarUsuarios(){
 
-  const request = await fetch('usuarios', {
+  const request = await fetch('http://localhost:8080/usuarios', {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
