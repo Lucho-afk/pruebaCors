@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.contenedor.contenido.dao.UsuarioDao;
 import com.contenedor.contenido.models.Usuario;
+import com.contenedor.contenido.utils.JWTUtil;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
@@ -24,6 +26,8 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioDao usuarioDao;
+	@Autowired
+	private JWTUtil jwtUtil;
 	
 	
 	@RequestMapping(value = "api/usuarios/{id}")
@@ -39,8 +43,13 @@ public class UsuarioController {
 		return usuario;
 	}
 	
-	@RequestMapping(value = "api/usuarios")
-	public List<Usuario> getUsuarios() {
+	@RequestMapping(value = "api/usuarios" , method = RequestMethod.GET)
+	public List<Usuario> getUsuarios(@RequestHeader(value = "authorization")String token) {
+		
+		String usuarioid = jwtUtil.getKey(token);
+		if(usuarioid == null) {
+			return new ArrayList<Usuario>();
+		}
 		return usuarioDao.getUsuarios();
 	}
 	
